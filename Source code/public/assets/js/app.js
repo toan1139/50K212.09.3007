@@ -1,0 +1,11 @@
+import { start } from './core.js';
+import './pages/chung.js';
+import './pages/auth.js';
+import './pages/tra-cuu.js';
+import './pages/khach.js';
+import './pages/don-thue.js';
+import './pages/lich.js';
+import './pages/khach-hang.js';
+import './pages/quan-ly.js';
+import './pages/quan-tri.js';
+start();

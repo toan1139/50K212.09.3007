@@ -1,0 +1,11 @@
+data
+audit
+tests
+tools
+scripts
+.impeccable
+shots
+node_modules
+*.log
+.env
+.env.*

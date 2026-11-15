@@ -1,0 +1,82 @@
+/* Shared palette from the exported Figma standards. Only button colors are normalized. */
+:root {
+  /* 01 · Bảng màu chuẩn (đúng mã trong Figma) */
+  --brand: #AC7F5E;        /* Nâu thương hiệu – nền sidebar và footer */
+  --primary: #A94E34;      /* Nâu đất – nút chính, liên kết, điểm nhấn */
+  --espresso: #2F2118;     /* Espresso – chữ và biểu tượng đang chọn */
+  --muted: #766453;        /* Nâu phụ – nhãn trường, nội dung hỗ trợ */
+  --cream: #F6EFE5;        /* Kem nền – nền chung của trang */
+  --surface: #FFFCF7;      /* Kem bề mặt – thẻ, vùng nội dung, mục chọn */
+  --line: #D9CBBB;         /* Viền ấm – đường phân cách, viền nhập liệu */
+  --sand: #C4A882;         /* Cát nhạt – biểu tượng trên nền nâu */
+
+  /* Trạng thái nút (02 · Nút: Mặc định / Di chuột / Nhấn / Tiêu điểm / Vô hiệu) */
+  --primary-hover: #943F28;
+  --primary-press: #7C3320;
+  --secondary-hover: #F2E3D7;
+  --disabled-bg: #E8DFD4;
+  --disabled-fg: #B3A493;
+
+  /* Sắc độ dẫn xuất (pha từ màu chuẩn, không thêm họ màu mới) */
+  --primary-soft: #F4E2DA;
+  --primary-line: #E7C3B5;
+  --brand-soft: #EFE3D7;
+  --brand-deep: #94694B;
+  --sand-soft: #F3E9DA;
+  --line-soft: #EADFD2;
+  --white: #FFFFFF;
+  --field: #FFFCF7;
+  --on-brand: #FFFCF7;
+  --hero: #E8D3C1;
+  --row-hover: #FBF6EF;
+  --pill: #F6B077;        /* Cam nhạt – nút thao tác danh mục (Figma "danh mục", "Khuyến mãi") */
+  --pill-hover: #F2A263;
+  --pill-line: #C98A57;
+  --amber-soft: #FFFBEB;  /* Nút viền vàng ở màn chi tiết đơn (Figma UC4.1) */
+  --amber: #D97706;
+  --amber-line: #FCD34D;
+  --amber-deep: #92400E;
+  --mustard: #C49A2C;     /* Nhãn "Đang thuê" trong khung "Còn lại" (lịch tháng) */
+  --focus-blue: #2F8FE0;  /* Viền khung "Còn lại" theo ảnh mẫu */
+  /* Màn Quên mật khẩu (đo từ ảnh mẫu) */
+  --fp-bg: #F4EFE7; --fp-brown: #B35E3D; --fp-text: #3E2D23; --fp-muted: #82766C; --fp-card-line: #EFE9DF;
+  --fp-field: #FFFDF9; --fp-field-line: #E9DCCF; --fp-link: #A87953; --fp-err: #C73D3D; --fp-err-bg: #FDECEC; --fp-err-line: #F6D6D6;
+  /* Danh sách tài khoản (Mở/Đóng, Phân quyền) – đo từ ảnh mẫu */
+  --acc-text: #392A20; --acc-muted: #9A897A; --acc-num: #5F5046; --acc-dot: #9D6748; --acc-step-bg: #FAF5EE; --acc-step-line: #F0E7DC;
+  --acc-btn2-bg: #F6EFE4; --acc-btn2-line: #ECE3D6; --acc-dong2-bg: #F4ECDD; --acc-dong2: #9B7C4A; --acc-dot-off: #D3C3B3; --acc-dot-off-num: #F9F7F5; --acc-step-off: #B3A393;
+  --acc-th-bg: #F7F3EE; --acc-sep: #EFE7DD; --acc-mo-bg: #E7F7EF; --acc-mo: #238B63; --acc-dong-bg: #F3E6D5; --acc-dong: #774A31;
+  --step-bg: #F2E5D3;     /* Nền thanh tiến trình (đăng nhập) */
+  --step-dot: #633D2B;    /* Bước đang thực hiện */
+  --blue-soft: #EFF6FF;   /* Chip "Ghi nhận CCCD" */
+  --blue: #1D4ED8;
+  --blue-line: #BFDBFE;
+  --green-ink: #41634E;
+  --green-soft: #EAF3EB;
+  --photo-bg: #F4F4F4;    /* nền ảnh sản phẩm */
+  --logo-bg: #1A1A1A;
+
+  /* Màu trạng thái – cùng họ màu ấm để không lệch tông */
+  --ok: #376044;    --ok-soft: #E5ECDC;   --ok-line: #E5ECDC;   --ok-icon: #31694C;
+  --warn: #9A5B16;  --warn-soft: #F8E8D2;  --warn-line: #EDCFA8;
+  --info: #38727D;  --info-soft: #EAF2F5;
+  --err: #C53643;   --err-soft: #FCEEF0;   --err-line: #EBC4C8;
+
+  /* Chữ */
+  --font: 'Inter', 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-logo: 'Times New Roman', Georgia, 'Noto Serif', serif;
+  --fs-xs: 12px; --fs-sm: 13px; --fs-md: 14px; --fs-base: 15px; --fs-lg: 17px; --fs-xl: 20px; --fs-2xl: 26px; --fs-3xl: 34px;
+
+  /* Kích thước */
+  --sidebar-w: clamp(224px, 14.58vw, 246px);      /* 224–256px */
+  --nav-item-h: 45px;      /* chiều cao mục sidebar */
+  --header-h: 80px;
+  --btn-h: 48px;           /* nút thao tác chính trong form */
+  --control-h: 48px;       /* ô nhập liệu */
+  --radius-sm: 6px; --radius: 8px; --radius-lg: 12px; --radius-pill: 999px;
+  --gap: 16px;
+  --shadow: 0 1px 2px rgba(47, 33, 24, .05), 0 4px 16px rgba(47, 33, 24, .05);
+  --shadow-lg: 0 18px 50px rgba(47, 33, 24, .22);
+  /* Màu ốp gợi ý trong bảng chọn màu */
+  --case-1: #2F2118; --case-2: #7B4A2B; --case-3: #C4A882; --case-4: #F3EDE3; --case-5: #C53643; --case-6: #38727D; --case-7: #376044; --case-8: #9A5B16; --case-9: #8A8F98; --case-10: #1A1A1A;
+  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary);
+}

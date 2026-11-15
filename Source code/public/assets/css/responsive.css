@@ -1,0 +1,126 @@
+/* =====================================================================
+   Responsive – nạp sau cùng. Chỉ thay đổi bố cục (co giãn, xếp lại cột,
+   ảnh co theo khung), không thay đổi nội dung.
+   Mốc: ≤1100px laptop nhỏ / máy tính bảng ngang · ≤900px máy tính bảng ·
+        ≤600px điện thoại · ≤340px điện thoại nhỏ
+   ===================================================================== */
+
+/* Nền tảng: không phần tử nào được tràn khung */
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: clip; }
+img, video, canvas { max-width: 100%; }
+.content :is(div, section, article, aside, form, fieldset, dl, dt, dd, label, p, h1, h2, h3, h4, li, nav, a, span) { min-width: 0; }
+.content :is(.input, select, textarea) { max-width: 100%; }
+.content :is(h1, h2, h3, p, dd, td, b, strong) { overflow-wrap: anywhere; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.chart, .report-chart svg, .chart-card svg { max-width: 100%; height: auto; }
+
+/* ---------- ≤1100px ---------- */
+@media (max-width: 1100px) {
+  .report-filters { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important; align-items: end; }
+  .report-filters .btn { justify-self: start; }
+  .machine-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important; }
+  .catalog-filters { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important; align-items: end; }
+}
+
+/* ---------- ≤900px: máy tính bảng ---------- */
+@media (max-width: 900px) {
+  .content { padding-left: 24px; padding-right: 24px; }
+  /* Lưới nhiều cột cố định → 1 cột co giãn */
+  .lookup-row, .price-lookup, .detail, .catalog-head, .month-layout,
+  .layout-aside, .layout-form-cal, .dm-card, .dm-card-sm, .report-sum, .pay-layout, .booking-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .lookup-row > *, .price-lookup > *, .detail > * { max-width: 100%; width: auto; }
+  .detail .gallery, .price-lookup .price-form { width: 100%; }
+  .catalog-head { gap: 16px; }
+  .book-list-item { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; gap: 12px 20px; }
+  .book-list-item .book-acts, .book-list-item .text-right { text-align: left; justify-self: start; }
+  .dm-card .dm-info, .dm-card > * { width: 100%; }
+  .hp-wrap { width: auto !important; max-width: 100%; padding-left: 24px !important; padding-right: 24px !important; box-sizing: border-box; }
+  .stepper, .account-steps, .model-selector { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .topbar { gap: 12px; }
+  .topbar .crumbs { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .shell-plain .plain-top .crumbs { white-space: normal; }
+  .modal { width: calc(100vw - 32px) !important; max-width: 560px; }
+}
+
+/* ---------- ≤600px: điện thoại ---------- */
+@media (max-width: 600px) {
+  .content { padding: 20px 16px 32px !important; }
+  .page-head { flex-wrap: wrap; gap: 12px; }
+  .page-head h1, .content > h1, .content h1 { font-size: clamp(24px, 7vw, 30px); line-height: 1.25; }
+  .page-head .sub { font-size: 14px; }
+  .card { padding: 16px !important; }
+
+  /* Biểu mẫu và lưới: 1 cột */
+  .form-grid, .row2, .price-fields, .report-stats, .report-filters, .catalog-filters,
+  .book-list-item, .severity, .sev-cards, .report-sum, .rep-total, .file-panels, .tb-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .machine-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+  .field.drop-field { grid-template-columns: minmax(0, 1fr) !important; }
+  .chips { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)) !important; }
+  dl.kv { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) !important; }
+  .tb-info dl, .dm-card dl, .content dl:not(.kv) { grid-template-columns: minmax(0, 1fr) !important; row-gap: 4px; }
+
+  /* Nút và hàng thao tác: tự xuống dòng */
+  .form-actions, .actions, .mf-actions, .book-acts, .lookup-actions { display: flex !important; flex-wrap: wrap; gap: 10px; }
+  .form-actions .btn { flex: 1 1 auto; }
+  .lookup-row .btn, .report-filters .btn, .catalog-filters .btn { width: 100%; justify-content: center; }
+  .page-head .btn { width: auto; }
+
+  /* Bảng: cuộn ngang trong khung, không đẩy trang */
+  .table-wrap .table { min-width: 560px; }
+
+  /* Thanh trên cùng */
+  .topbar { margin: 0 !important; padding: 12px 16px !important; height: auto !important; flex-wrap: wrap; }
+  .plain-top { padding: 16px !important; }
+
+  /* Chân trang: logo trải 2 cột, thông tin chia 2 cột */
+  .footer, .home > .footer { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 24px 16px !important; padding: 36px 16px 40px !important; min-height: 0 !important; }
+  .footer .f-brand { grid-column: 1 / -1; padding-top: 0 !important; }
+  .footer .f-brand p { margin-top: 12px !important; }
+  .footer > div:last-child { grid-column: 1 / -1; }
+
+  /* Trang chủ dạng menu ngang */
+  .hp-wrap { padding-left: 16px !important; padding-right: 16px !important; }
+  .hp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+
+  /* Thẻ chi tiết thiết bị / dòng máy */
+  .dm-card { padding: 16px !important; }
+  .dm-stats { flex-wrap: wrap; gap: 10px !important; }
+
+  /* Lịch tháng: thu nhỏ ô */
+  .month-cal, .calendar { font-size: 12px; }
+
+  /* Hộp thoại */
+  .modal-foot { flex-wrap: wrap; }
+  .modal-foot .btn { flex: 1 1 auto; }
+}
+
+/* ---------- ≤340px: điện thoại nhỏ ---------- */
+@media (max-width: 340px) {
+  .machine-grid, .hp-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .footer, .home > .footer { grid-template-columns: minmax(0, 1fr) !important; }
+}
+
+/* Bổ sung sau khi soát */
+@media (max-width: 900px) {
+  .order-page .table-wrap { overflow-x: auto !important; }
+  .detail .gallery .main, .gallery .main { width: 100% !important; max-width: 100%; }
+  .gallery .main img { width: 100%; height: auto; }
+}
+@media (max-width: 600px) {
+  /* Đăng nhập / đăng ký / quên mật khẩu: logo trên, đường dẫn dưới */
+  .shell-plain .plain-top { height: auto !important; padding: 16px 16px 0 !important; display: flex !important; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .shell-plain .plain-top .logo { position: static !important; }
+  .shell-plain .plain-top .crumbs { position: static !important; margin: 0 !important; padding: 0 !important; white-space: normal; }
+  /* Thanh bước: tự xuống dòng */
+  .stepper { flex-wrap: wrap; height: auto !important; gap: 10px 14px !important; padding: 12px 14px !important; overflow: visible; }
+  .stepper .bar { display: none !important; }
+  .stepper > * { flex: 0 1 auto; }
+}
+@media (max-width: 600px) {
+  .table-wrap td:first-child, .table-wrap th { white-space: nowrap; }
+}
