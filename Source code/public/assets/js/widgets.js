@@ -281,7 +281,11 @@ export function colorPicker(root, name, { placeholder = 'Chọn màu ốp' } = {
   wrap.querySelectorAll('[data-c]').forEach((x) => { x.oninput = () => { const [r, g, b] = [...wrap.querySelectorAll('[data-c]')].map((y) => y.value); setHex(rgbArr2hex(r, g, b), 'rgb'); }; });
   wrap.querySelectorAll('[data-hex]').forEach((b) => { b.onclick = () => setHex(b.dataset.hex); });
   const close = () => { pop.hidden = true; wrap.classList.remove('open'); };
-  $c('.cp-trigger').onclick = () => { if (!pop.hidden) return close(); setHex(hidden.value || '#C4A882'); pop.hidden = false; wrap.classList.add('open'); };
+  $c('.cp-trigger').onclick = () => { if (!pop.hidden) return close(); setHex(hidden.value || '#C4A882'); pop.hidden = false; wrap.classList.add('open');
+    // Giữ bảng chọn màu trong khung nhìn: lệch sang trái nếu tràn mép phải, cuộn tới nếu bị che phía dưới
+    pop.style.left = ''; const pr = pop.getBoundingClientRect(), room = document.documentElement.clientWidth - 16;
+    if (pr.right > room) pop.style.left = Math.max(room - pr.right, -pr.left + 16) + 'px';
+    pop.scrollIntoView({ block: 'nearest' }); };
   $c('.cp-cancel').onclick = close;
   $c('.cp-ok').onclick = () => {
     hidden.value = cur(); showTrigger(); close();

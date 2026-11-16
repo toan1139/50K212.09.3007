@@ -24,11 +24,11 @@ function otpPanel(root,otp,o){
  const setExpired=(text='Mã OTP đã hết hạn.')=>{expired=true;clearInterval(timer);clear();
   if(o.topAlert&&top){top.innerHTML=alertBox('error',text.replace(/\.$/,''));if(demoBox)demoBox.hidden=true;}else if(msg)msg.textContent=text;
   if(rem){rem.textContent='Thời gian hiệu lực: 00:00 - Đã hết hạn';rem.classList.add('expired');}
-  ins.forEach(x=>{x.disabled=true;});btn.textContent='Gửi lại mã OTP';btn.hidden=false;btn.onclick=o.resend;};
+  ins.forEach(x=>{x.disabled=true;});btn.textContent='Gửi lại mã OTP';btn.classList.add('otp-resend');btn.hidden=false;btn.onclick=o.resend;};
  const setWrong=()=>{clear();
   if(o.topAlert&&top){top.innerHTML=alertBox('error','Mã OTP không chính xác');if(demoBox)demoBox.hidden=true;}
   else{if(msg)msg.textContent='Mã OTP không chính xác.';ins.forEach((x,i)=>x.classList.toggle('bad',otp.otp_demo?x.value!==otp.otp_demo[i]:true));}
-  btn.textContent='Nhập lại mã OTP';btn.hidden=false;btn.onclick=()=>{clear();ins.forEach(x=>{x.value='';});btn.hidden=true;ins[0].focus();};};
+  btn.textContent='Nhập lại mã OTP';btn.classList.remove('otp-resend');btn.hidden=false;btn.onclick=()=>{clear();ins.forEach(x=>{x.value='';});btn.hidden=true;ins[0].focus();};};
  if(o.timer!==false&&rem){const tick=()=>{if(!root.isConnected)return clearInterval(timer);const sec=Math.max(0,Math.ceil((deadline-Date.now())/1000));if(!expired)rem.textContent='Thời gian hiệu lực: '+fmt(sec);if(!sec&&!expired)setExpired();};tick();timer=setInterval(tick,1000);}
  else timer=setInterval(()=>{if(!root.isConnected)return clearInterval(timer);if(Date.now()>=deadline&&!expired)setExpired();},1000);
  bindOtp(root,async ma=>{if(busy||expired)return;busy=true;clear();

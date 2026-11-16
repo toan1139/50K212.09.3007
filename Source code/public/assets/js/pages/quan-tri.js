@@ -40,7 +40,7 @@ route('/tai-khoan/:id',{title:'Thông tin tài khoản',crumbs:()=>{const k=curM
  f.addEventListener('submit',()=>setTimeout(hideStepsIfAlert,400));
  onSubmit(f,async d=>{clearTop();
   if(mode==='phan-quyen'){await api('/tai-khoan/'+id+'/quyen',{method:'PUT',body:{quyen:[...(d.quyen||[]),...original.quyen.filter(q=>q==='QL_LICH')]}});
-   $$('input',f).forEach(x=>x.disabled=true);$('.form-actions',f).remove();stepsShow(3);bottom.innerHTML=alertBox('ok','Phân quyền tài khoản thành công','','',{left:true});}
+   $$('input',f).forEach(x=>{if(x.type==='checkbox'){x.tabIndex=-1;x.setAttribute('aria-readonly','true');x.addEventListener('click',e=>e.preventDefault());}else x.disabled=true;});f.classList.add('perm-done');$('.form-actions',f).remove();stepsShow(3);bottom.innerHTML=alertBox('ok','Phân quyền tài khoản thành công','','',{left:true});}
   else{await api('/tai-khoan/'+id,{method:'PUT',body:d});$$('input',f).forEach(x=>x.disabled=true);$('.form-actions',f).remove();stepsShow(3);bottom.innerHTML=alertBox('ok','Cập nhật tài khoản thành công');}},{errOpts});
  }
 });

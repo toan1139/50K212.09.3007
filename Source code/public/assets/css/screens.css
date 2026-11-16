@@ -1222,3 +1222,25 @@ dd:has(> .tb-st-pick) > .tb-st{flex:0 0 100%}
 .cccd-panel .btn-dark-pill{align-self:center;height:36px;min-height:36px;padding:0 18px;font-size:13px;background:color-mix(in srgb,var(--brand-deep) 60%,var(--espresso));border-color:transparent;color:var(--white)}
 .cccd-panel .btn-dark-pill:hover{background:var(--espresso)}
 @media(min-width:901px){.cccd-panel .fp-head{flex-wrap:nowrap;gap:8px}.cccd-panel .fp-head label{flex:none;white-space:nowrap}.cccd-panel .fp-head .tiny{font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}}
+/* Quên mật khẩu: nút "Nhập lại mã OTP" (căn trái) và "Gửi lại mã OTP" (căn giữa) gọn lại theo mẫu */
+.forgot-view .otp-btn{display:flex;width:auto;min-width:200px;height:48px;padding:0 28px;margin:20px 0 0;border-radius:8px;font-size:14px;font-weight:600}
+.forgot-view .otp-btn.otp-resend{margin:20px auto 0}
+.forgot-view .otp-btn[hidden]{display:none}
+/* Phân quyền thành công: các ô đã tick vẫn hiện màu như trước, chỉ không bấm đổi được nữa */
+.perm-done .acc-perm .check,.perm-done .acc-perm input[type=checkbox]{cursor:default}
+/* Chọn màu ốp: theo mẫu – nút chọn gọn, viền nhấn khi mở; bảng chọn nhỏ gọn, không tràn khỏi màn hình */
+.cp .cp-trigger.input{width:auto;min-width:130px;gap:10px}
+.cp.open .cp-trigger{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft,var(--brand-soft))}
+.cp-pop{z-index:60;width:min(400px,calc(100vw - 32px));padding:16px 16px 14px}
+.cp-head{margin-bottom:12px}
+.cp-body{grid-template-columns:130px 1fr;gap:16px}
+.cp-wheel{width:130px;height:130px}
+.cp-side{gap:10px}
+.cp-actions .btn{height:36px;min-height:36px}
+.cp-light{grid-template-columns:auto minmax(60px,1fr) 38px}.cp-light input[type=range]{width:100%;min-width:0;margin:0}
+/* Cập nhật tài khoản thành công: các ô nhập giữ nền trắng, chữ đậm như lúc chưa lưu (chỉ không sửa được) */
+body[data-page="tai-khoan"] .form-grid .input:disabled{background:var(--surface);border-color:var(--line-soft);color:var(--espresso);opacity:1;-webkit-text-fill-color:var(--espresso);cursor:default}
+/* Máy ảnh & Thiết lập giá: nút Chọn, Lưu, Thêm cùng màu nâu đỏ (giống nút Thuê ngay) */
+body[data-page="quan-ly"] :is(.btn-save,.btn-choose-brown,.btn-choose-peach,.btn-pill.btn-peach){background:var(--primary);border-color:var(--primary);color:var(--surface)}
+body[data-page="quan-ly"] :is(.btn-save,.btn-choose-brown,.btn-choose-peach,.btn-pill.btn-peach):hover{background:var(--primary-hover);border-color:var(--primary-hover);color:var(--surface)}
+body[data-page="quan-ly"] .btn-pill.btn-peach svg{color:var(--surface)}
