@@ -33,6 +33,7 @@ export async function api(path, { method = 'GET', body, query } = {}) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     if (res.status === 401 && state.user && path !== '/auth/dang-nhap') { state.user = null; toast('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.', 'err'); go('/dang-nhap'); }
+    if (res.status >= 500) console.error('[ME.E] Lỗi máy chủ', res.status, method, url, 'mã sự cố:', data.error?.ma_su_co || res.headers.get('X-Request-Id'));
     throw new ApiError(data.error || { code: 'E_LOI_HE_THONG', message: 'Hệ thống đang gặp sự cố, vui lòng thử lại sau.' }, res.status);
   }
   return data;

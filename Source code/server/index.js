@@ -33,12 +33,22 @@ if (PROD) {
   // Các bước chỉnh dữ liệu mẫu ghi rất nhiều dòng (với CSDL online mỗi lệnh ghi là một vòng mạng),
   // nên chỉ chạy lại khi seed.js thay đổi – không chạy ở mỗi lần khởi động máy chủ.
   const SEED_KEY = 'seed-' + require('node:crypto').createHash('sha1').update(fs.readFileSync(path.join(__dirname, 'seed.js'))).digest('hex').slice(0, 16);
-  if (!one('SELECT 1 FROM cap_nhat_du_lieu WHERE ma=?', SEED_KEY)) {
-    seed.capNhatTaiKhoanDemo();
-    seed.capNhatDuLieuMau();
-    seed.boSungKhachMau();
-    seed.goMayMauTest();
-    run("INSERT OR IGNORE INTO cap_nhat_du_lieu(ma, thoi_gian) VALUES (?, datetime('now', 'localtime'))", SEED_KEY);
+  const { KHOI_DONG } = require('./db');
+  // Sau mỗi lần deploy có thể có nhiều máy chủ khởi động cùng lúc và cùng chạy bước này. Máy chủ đến sau có thể
+  // vấp lỗi trùng / khóa CSDL: chỉ ghi log rồi phục vụ bình thường (máy chủ kia đã cập nhật xong) – không để sập.
+  try {
+    if (!one('SELECT 1 FROM cap_nhat_du_lieu WHERE ma=?', SEED_KEY)) {
+      seed.capNhatTaiKhoanDemo();
+      seed.capNhatDuLieuMau();
+      seed.boSungKhachMau();
+      seed.goMayMauTest();
+      run("INSERT OR IGNORE INTO cap_nhat_du_lieu(ma, thoi_gian) VALUES (?, datetime('now', 'localtime'))", SEED_KEY);
+      KHOI_DONG.du_lieu_mau = 'da_cap_nhat';
+    } else KHOI_DONG.du_lieu_mau = 'bo_qua';
+  } catch (e) {
+    KHOI_DONG.du_lieu_mau = 'loi';
+    KHOI_DONG.du_lieu_mau_loi = String(e && e.message || e).slice(0, 200);
+    console.error('[KHOI_DONG] Bỏ qua bước cập nhật dữ liệu mẫu:', e);
   }
 }
 ['auth', 'tra-cuu', 'dat-lich', 'khach-hang', 'don-thue', 'quan-ly', 'bao-cao', 'tai-khoan'].forEach((f) => require('./routes/' + f));
@@ -47,24 +57,40 @@ const PUBLIC = path.join(__dirname, '..', 'public');
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.svg': 'image/svg+xml',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon', '.json': 'application/json' };
 
-function serveFile(res, file) {
+// ETag theo nội dung tệp (tính một lần mỗi máy chủ) để trình duyệt nhận 304 khi tệp không đổi, và luôn nhận bản mới sau deploy.
+const ETAGS = new Map();
+const CACHE_LAU = new Set(['.png', '.jpg', '.jpeg', '.webp', '.svg', '.ico', '.woff', '.woff2']);
+function serveFile(res, file, req) {
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) { res.writeHead(404); return res.end('Not found'); }
-    res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
+    const ext = path.extname(file).toLowerCase();
+    let etag = ETAGS.get(file);
+    if (!etag) { try { etag = '"' + require('node:crypto').createHash('sha1').update(fs.readFileSync(file)).digest('base64url').slice(0, 20) + '"'; ETAGS.set(file, etag); } catch { etag = null; } }
+    const headers = { 'Content-Type': MIME[ext] || 'application/octet-stream',
+      'Cache-Control': CACHE_LAU.has(ext) ? 'public, max-age=86400, stale-while-revalidate=604800' : 'no-cache' };
+    if (etag) headers.ETag = etag;
+    if (etag && req && req.headers['if-none-match'] === etag) { res.writeHead(304, headers); return res.end(); }
+    res.writeHead(200, headers);
     fs.createReadStream(file).pipe(res);
   });
 }
 
 const server = http.createServer(async (req, res) => {
+  const batDau = Date.now();
+  const reqId = String(req.headers['x-vercel-id'] || '').split('::').pop().slice(0, 24) || require('node:crypto').randomBytes(6).toString('hex');
+  res.setHeader('X-Request-Id', reqId);
   const url = new URL(req.url, 'http://localhost');
   let pathname;
   try { pathname = decodeURIComponent(url.pathname); }
   catch { res.writeHead(400); return res.end('Bad request'); }
   if (pathname === '/health') {
-    const healthy = one('SELECT 1 AS ok')?.ok === 1;
+    let healthy = false, csdl_loi = null;
+    try { healthy = one('SELECT 1 AS ok')?.ok === 1; } catch (e) { csdl_loi = String(e && e.message || e).slice(0, 120); }
     const { KHOI_DONG, DB_FILE } = require('./db');
     let db_bytes = null; try { db_bytes = fs.statSync(DB_FILE).size; } catch {}
-    return send(res, healthy ? 200 : 503, { ok: healthy, khoi_dong: KHOI_DONG, db_bytes });
+    const env = process.env;
+    const phien_ban = { deploy: env.VERCEL_DEPLOYMENT_ID || null, commit: (env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7) || null, url: env.VERCEL_URL || null, vung: env.VERCEL_REGION || null, node: process.version };
+    return send(res, healthy ? 200 : 503, { ok: healthy, csdl: healthy ? 'ok' : 'loi', csdl_loi, thoi_gian: now(), phan_hoi_ms: Date.now() - batDau, phien_ban, khoi_dong: KHOI_DONG, db_bytes }, { 'Cache-Control': 'no-store' });
   }
   if (pathname.startsWith('/api/')) {
     syncRemote();
@@ -82,8 +108,9 @@ const server = http.createServer(async (req, res) => {
     } catch (e) {
       if (e instanceof AppError) return send(res, e.status, { error: { code: e.code, message: e.message, fields: e.fields || {} } }, ctx.headers);
       if (/UNIQUE constraint/.test(e.message)) return send(res, 409, { error: { code: 'TRUNG_THONG_TIN', message: 'Dữ liệu bị trùng, vui lòng kiểm tra lại.', fields: {} } });
-      console.error(e);
-      send(res, 500, { error: { code: 'E_LOI_HE_THONG', message: 'Hệ thống đang gặp sự cố, vui lòng thử lại sau.', fields: {} } });
+      const ma_su_co = reqId;
+      console.error(`[E_LOI_HE_THONG] ${new Date().toISOString()} id=${reqId} ${req.method} ${pathname} status=500 ms=${Date.now() - batDau}\n${e && e.stack || e}`);
+      send(res, 500, { error: { code: 'E_LOI_HE_THONG', message: 'Hệ thống đang gặp sự cố, vui lòng thử lại sau.', ma_su_co, fields: {} } });
     }
     return;
   }
@@ -100,8 +127,8 @@ const server = http.createServer(async (req, res) => {
   }
   const file = path.normalize(path.join(PUBLIC, pathname));
   if (!file.startsWith(PUBLIC)) { res.writeHead(403); return res.end(); }
-  if (pathname !== '/' && fs.existsSync(file) && fs.statSync(file).isFile()) return serveFile(res, file);
-  serveFile(res, path.join(PUBLIC, 'index.html')); // SPA
+  if (pathname !== '/' && fs.existsSync(file) && fs.statSync(file).isFile()) return serveFile(res, file, req);
+  serveFile(res, path.join(PUBLIC, 'index.html'), req); // SPA
 });
 
 const PORT = Number(process.env.PORT) || 3000;
