@@ -215,79 +215,40 @@ function capNhatDuLieuMau() {
 }
 
 
-/* Bổ sung máy ảnh mẫu cho các nhóm test (11/2026): 6 dòng máy mới, thiết bị đủ trạng thái và đơn thuê mẫu.
-   CHỈ THÊM: dòng máy đã có (theo tên) thì bỏ qua; đơn mẫu chỉ tạo cùng lúc với dòng máy mới nên chạy lại không bị trùng. */
-const MAY_MAU_TEST = [
-  ['Sony ZV-E10', 'Sony', 'Mirrorless', 'Máy vlog cảm biến APS-C, nút làm mờ phông một chạm, màn hình lật bên – hợp quay TikTok, review sản phẩm.', 'sony-zv-e10', [200000, 250000, 490000, 730000, 240000], 4000000, { 'Cảm biến': 'APS-C 24,2 MP', 'Video': '4K 30p', 'Trọng lượng': '343g', 'Ống kính kèm': 'E PZ 16-50mm' }],
-  ['Canon PowerShot G7 X Mark III', 'Canon', 'Compact', 'Máy compact bỏ túi, cảm biến 1 inch, ống kính sáng f/1.8–2.8 – mang đi chơi gọn nhẹ, quay vlog tiện.', 'canon-g7x3', [180000, 230000, 450000, 670000, 220000], 4000000, { 'Cảm biến': '1 inch 20,1 MP', 'Ống kính': '24-100mm f/1.8-2.8', 'Video': '4K 30p', 'Trọng lượng': '304g' }],
-  ['Nikon Z fc', 'Nikon', 'Mirrorless', 'Thiết kế cổ điển với các vòng xoay vật lý, màu ảnh trong trẻo – vừa đẹp để chụp vừa đẹp để cầm.', 'nikon-zfc', [220000, 280000, 550000, 820000, 260000], 5000000, { 'Cảm biến': 'APS-C 20,9 MP', 'Video': '4K 30p', 'Trọng lượng': '445g', 'Ống kính kèm': 'Z DX 16-50mm' }],
-  ['Ricoh GR III', 'Ricoh', 'Compact', 'Máy chụp phố huyền thoại, ống kính 28mm f/2.8 sắc nét, nhỏ vừa túi áo – bấm máy nhanh, kín đáo.', 'ricoh-gr3', [230000, 290000, 570000, 850000, 270000], 6000000, { 'Cảm biến': 'APS-C 24,2 MP', 'Ống kính': '18,3mm (28mm) f/2.8', 'Chống rung': '3 trục', 'Trọng lượng': '257g' }],
-  ['Sony A6400', 'Sony', 'Mirrorless', 'Lấy nét theo mắt thời gian thực, màn hình lật 180° – chụp chân dung, sự kiện và quay vlog đều ổn.', 'sony-a6400', [200000, 260000, 510000, 760000, 240000], 5000000, { 'Cảm biến': 'APS-C 24,2 MP', 'Video': '4K 30p', 'Trọng lượng': '403g', 'Ống kính kèm': 'E 16-50mm' }],
-  ['Canon EOS R10', 'Canon', 'Mirrorless', 'Chụp liên tiếp nhanh, lấy nét bám chủ thể tốt, báng cầm chắc – hợp chụp thể thao, trẻ em, du lịch.', 'canon-r10', [220000, 280000, 550000, 820000, 260000], 5000000, { 'Cảm biến': 'APS-C 24,2 MP', 'Video': '4K 60p', 'Trọng lượng': '429g', 'Ống kính kèm': 'RF-S 18-45mm' }],
-];
-function boSungMayMau() {
-  const ngay = (offsetDays, h = 9, m = 0) => { const d = new Date(); d.setDate(d.getDate() + offsetDays); d.setHours(h, m, 0, 0); return d; };
-  const khach = (sdt) => one('SELECT id FROM khach_hang WHERE sdt=?', sdt)?.id || one('SELECT id FROM khach_hang ORDER BY id LIMIT 1')?.id;
-  const nvId = one("SELECT id FROM tai_khoan WHERE sdt='0222444666'")?.id || one("SELECT id FROM tai_khoan WHERE vai_tro IN ('NV','CH') ORDER BY id LIMIT 1")?.id;
-  const chuId = one("SELECT id FROM tai_khoan WHERE sdt='0123456789'")?.id || nvId;
-  if (!nvId || !one('SELECT 1 FROM khach_hang')) return;
-  // Đơn mẫu: [khách, kênh, lệch ngày nhận, số ngày, trạng thái, thứ tự máy trong dòng]
-  const DON = [
-    [['0111333555', 'ONLINE', -20, 2, 'HOAN_TAT', 0], ['0935111222', 'TAI_QUAY', -1, 3, 'DANG_THUE', 0], ['0905234567', 'ONLINE', 4, 2, 'CHO_BAN_GIAO', 1]],
-    [['0935222333', 'TAI_QUAY', -15, 1, 'HOAN_TAT', 0], ['0111333555', 'ONLINE', 6, 2, 'CHO_BAN_GIAO', 0], ['0935333444', 'TAI_QUAY', 3, 1, 'DA_HUY', 1]],
-    [['0905234567', 'ONLINE', -12, 3, 'HOAN_TAT', 0], ['0935444555', 'TAI_QUAY', -2, 4, 'DANG_THUE', 1], ['0935555666', 'TAI_QUAY', 9, 2, 'CHO_BAN_GIAO', 0]],
-    [['0935666777', 'TAI_QUAY', -9, 2, 'HOAN_TAT', 0], ['0111333555', 'ONLINE', -4, 3, 'CHO_KIEM_TRA', 0], ['0935111222', 'TAI_QUAY', 12, 3, 'CHO_BAN_GIAO', 1]],
-    [['0935333444', 'TAI_QUAY', -25, 2, 'HOAN_TAT', 0], ['0905234567', 'ONLINE', 2, 1, 'DA_HUY', 0], ['0935222333', 'TAI_QUAY', 1, 2, 'CHO_BAN_GIAO', 1]],
-    [['0935444555', 'TAI_QUAY', -6, 1, 'HOAN_TAT', 0], ['0111333555', 'ONLINE', 0, 2, 'DANG_THUE', 0], ['0935666777', 'TAI_QUAY', 15, 2, 'CHO_BAN_GIAO', 1]],
-  ];
+/* Gỡ 6 dòng máy mẫu đã thêm cho nhóm test (16/11/2026) theo yêu cầu cửa hàng – giữ lại 14 dòng máy gốc.
+   Xóa hẳn dòng máy, thiết bị và mọi đơn chỉ dùng các máy này (kèm chi tiết, thanh toán, CCCD, lỗi, lịch sử).
+   Nếu có đơn dùng chung với máy khác thì không xóa đơn đó mà chỉ ẩn dòng máy để giữ đúng dữ liệu đơn. Chạy lại an toàn. */
+const MAY_MAU_DA_GO = ['Sony ZV-E10', 'Canon PowerShot G7 X Mark III', 'Nikon Z fc', 'Ricoh GR III', 'Sony A6400', 'Canon EOS R10'];
+function goMayMauTest() {
   tx(() => {
-    MAY_MAU_TEST.forEach(([ten, hang, loai, mo_ta, anh, gia, coc, ts], i) => {
-      if (one('SELECT 1 FROM dong_may WHERE ten=? COLLATE NOCASE', ten)) return;
-      const dmId = Number(run(`INSERT INTO dong_may(ma, ten, hang, loai, mo_ta, thong_so, anh, gia_buoi, gia_ngay, gia_2_ngay, gia_3_ngay, gia_ngay_them, tien_coc, ngay_tao) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-        sinhMa('DM'), ten, hang, loai, mo_ta, JSON.stringify(ts), `/assets/img/products/${anh}.svg`, ...gia, coc, fmt(ngay(-60))).lastInsertRowid);
-      // 3–4 thiết bị mỗi dòng, màu ốp khác nhau; máy cuối của dòng chẵn đang bảo trì
-      const soMay = i % 2 ? 3 : 4;
-      const tbIds = [];
-      for (let k = 1; k <= soMay; k++) {
-        const serial = `${hang.slice(0, 2).toUpperCase()}${anh.replace(/\W/g, '').toUpperCase().slice(-4)}-${3000 + i * 10 + k}`;
-        if (one('SELECT 1 FROM thiet_bi WHERE so_serial=?', serial)) continue;
-        const baoTri = k === soMay && i % 2 === 0;
-        tbIds.push(Number(run(`INSERT INTO thiet_bi(ma, dong_may_id, so_serial, mau, tinh_trang, ghi_chu, anh_tinh_trang, ngay_tao) VALUES (?,?,?,?,?,?,?,?)`,
-          sinhMa('TB'), dmId, serial, MAU_OP[(i * 4 + k) % MAU_OP.length], baoTri ? 'BAO_TRI' : 'SAN_SANG',
-          baoTri ? 'Đang vệ sinh cảm biến, dự kiến xong trong tuần' : (k === 1 ? 'Máy đẹp, đủ phụ kiện theo máy' : null),
-          k === 1 || baoTri ? `/assets/img/products/${anh}.svg` : null, fmt(ngay(-60))).lastInsertRowid));
+    for (const ten of MAY_MAU_DA_GO) {
+      const dm = one('SELECT id FROM dong_may WHERE ten=? COLLATE NOCASE', ten);
+      if (!dm) continue;
+      const tbIds = all('SELECT id FROM thiet_bi WHERE dong_may_id=?', dm.id).map((x) => x.id);
+      const donIds = tbIds.length ? [...new Set(all(`SELECT DISTINCT don_id FROM chi_tiet_don WHERE thiet_bi_id IN (${tbIds.map(() => '?').join(',')})`, ...tbIds).map((x) => x.don_id))] : [];
+      let giuDon = false;
+      for (const donId of donIds) {
+        const khac = one(`SELECT 1 FROM chi_tiet_don c JOIN thiet_bi t ON t.id=c.thiet_bi_id WHERE c.don_id=? AND t.dong_may_id<>?`, donId, dm.id);
+        if (khac) { giuDon = true; continue; }
+        for (const bang of ['loi_ghi_nhan', 'thanh_toan', 'ghi_nhan_cccd', 'chi_tiet_phu_kien', 'chi_tiet_don', 'lich_su_don']) {
+          try { run(`DELETE FROM ${bang} WHERE don_id=?`, donId); } catch { /* bảng chưa có ở CSDL cũ */ }
+        }
+        run('DELETE FROM don_thue WHERE id=?', donId);
       }
-      const dm = one('SELECT * FROM dong_may WHERE id=?', dmId);
-      // Đơn thuê mẫu cho dòng máy mới (chỉ dùng máy Còn trống của dòng này nên không đụng lịch máy khác)
-      for (const [sdt, kenh, off, soNgay, tt, k] of DON[i]) {
-        const tbId = tbIds[k]; const kh = khach(sdt); if (!tbId || !kh) continue;
-        const nhan = ngay(off, 9), tra = ngay(off + soNgay, 18), created = ngay(Math.min(off, 0) - 2, 10);
-        const bg = NV.baoGia({ mayList: [{ dong_may: dm, so_luong: 1 }], soGio: (tra - nhan) / 3600e3, coDatLich: kenh === 'ONLINE' });
-        const donId = Number(run(`INSERT INTO don_thue(ma, ma_dat_lich, khach_hang_id, nguoi_tao_id, kenh, ngay_nhan, ngay_tra, trang_thai, tien_thue, tien_phu_kien, giam_gia, tien_coc_may, coc_dat_lich, ghi_chu, ly_do_huy, ngay_tao, ngay_cap_nhat)
-          VALUES (?,?,?,?,?,?,?,?,?,0,0,?,?,?,?,?,?)`, sinhMa('DT', created), kenh === 'ONLINE' ? sinhMa('DL', created) : null, kh, kenh === 'ONLINE' ? null : (i % 2 ? chuId : nvId), kenh,
-          fmt(nhan), fmt(tra), tt, bg.tien_thue, bg.tien_coc_may, bg.coc_dat_lich, 'Đơn mẫu cho nhóm test', tt === 'DA_HUY' ? 'Khách đổi lịch đi chơi' : null, fmt(created), fmt(tt === 'HOAN_TAT' ? tra : created)).lastInsertRowid);
-        run('INSERT INTO chi_tiet_don VALUES (?,?,?)', donId, tbId, bg.may[0].don_gia);
-        if (kenh === 'ONLINE') {
-          const maTT = sinhMa('TT', created);
-          run('UPDATE don_thue SET ma_tham_chieu=? WHERE id=?', maTT, donId);
-          run('INSERT INTO thanh_toan(ma, don_id, loai, so_tien, phuong_thuc, thoi_gian) VALUES (?,?,?,?,?,?)', maTT, donId, 'DAT_LICH', bg.coc_dat_lich, 'CHUYEN_KHOAN', fmt(created));
-        }
-        if (['DANG_THUE', 'CHO_KIEM_TRA', 'HOAN_TAT'].includes(tt)) {
-          const k2 = one('SELECT * FROM khach_hang WHERE id=?', kh);
-          const so = k2.cccd || ('0481990' + String(20000 + donId).slice(-5));
-          if (!k2.cccd) run('UPDATE khach_hang SET cccd=? WHERE id=?', so, kh);
-          run('INSERT INTO ghi_nhan_cccd(don_id, so_cccd, ho_ten, noi_cap, nguoi_ghi_id, thoi_gian) VALUES (?,?,?,?,?,?)', donId, so, k2.ho_ten, 'Cục CS QLHC về TTXH', nvId, fmt(nhan));
-        }
-        if (tt === 'HOAN_TAT') run('INSERT INTO thanh_toan(ma, don_id, loai, so_tien, phuong_thuc, thoi_gian) VALUES (?,?,?,?,?,?)', sinhMa('TT', tra), donId, 'THUE', bg.tong_tien_thue - bg.coc_dat_lich, 'TIEN_MAT', fmt(tra));
-        // Đơn hoàn tất của Ricoh GR III có ghi nhận lỗi nhẹ để màn lỗi / báo cáo có dữ liệu
-        if (tt === 'HOAN_TAT' && i === 3) {
-          run('INSERT INTO loi_ghi_nhan(ma, don_id, doi_tuong, thiet_bi_id, muc_do, mo_ta, phi_den_bu, nguoi_ghi_id, thoi_gian) VALUES (?,?,?,?,?,?,?,?,?)', sinhMa('LG'), donId, 'MAY', tbId, 'NHE', 'Trầy nhẹ viền màn hình, không ảnh hưởng sử dụng.', 100000, nvId, fmt(tra));
-          run('UPDATE don_thue SET phi_den_bu=100000 WHERE id=?', donId);
-          run('INSERT INTO thanh_toan(ma, don_id, loai, so_tien, phuong_thuc, thoi_gian) VALUES (?,?,?,?,?,?)', sinhMa('TT', tra), donId, 'DEN_BU', 100000, 'TIEN_MAT', fmt(tra));
-        }
+      // Bỏ dòng máy khỏi khuyến mãi áp dụng theo dòng máy (nếu có)
+      for (const km of all("SELECT id, dong_may_ids FROM khuyen_mai WHERE dong_may_ids LIKE ?", `%${dm.id}%`)) {
+        let ds; try { ds = JSON.parse(km.dong_may_ids || '[]'); } catch { continue; }
+        if (Array.isArray(ds) && ds.map(Number).includes(dm.id)) run('UPDATE khuyen_mai SET dong_may_ids=? WHERE id=?', JSON.stringify(ds.filter((x) => Number(x) !== dm.id)), km.id);
       }
-    });
+      if (giuDon) { run("UPDATE dong_may SET trang_thai='AN' WHERE id=?", dm.id); run("UPDATE thiet_bi SET tinh_trang='NGUNG' WHERE dong_may_id=?", dm.id); continue; }
+      try { run('DELETE FROM loi_ghi_nhan WHERE thiet_bi_id IN (SELECT id FROM thiet_bi WHERE dong_may_id=?)', dm.id); } catch { /* bỏ qua */ }
+      run('DELETE FROM thiet_bi WHERE dong_may_id=?', dm.id);
+      run('DELETE FROM dong_may WHERE id=?', dm.id);
+    }
+    // Số CCCD tạm mà phần dữ liệu mẫu đã điền cho khách (dạng 04819902xxxx) – trả về trống nếu không còn đơn nào dùng
+    run("UPDATE khach_hang SET cccd=NULL WHERE cccd LIKE '04819902%' AND length(cccd)=12 AND NOT EXISTS (SELECT 1 FROM ghi_nhan_cccd g WHERE g.so_cccd=khach_hang.cccd)");
   });
 }
-module.exports = { seedIfEmpty, boSungKhachMau, capNhatTaiKhoanDemo, capNhatDuLieuMau, boSungMayMau, MAT_KHAU };
+
+module.exports = { seedIfEmpty, boSungKhachMau, capNhatTaiKhoanDemo, capNhatDuLieuMau, goMayMauTest, MAT_KHAU };
 if (require.main === module) { seedIfEmpty(); capNhatTaiKhoanDemo(); capNhatDuLieuMau(); boSungKhachMau(); db.close(); }
