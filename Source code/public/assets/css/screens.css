@@ -1250,3 +1250,34 @@ body[data-page="don-thue"] .btn-primary:hover,body[data-page="don-thue"] .page-h
 body[data-page="don-thue"] .page-head .btn-primary svg{color:var(--surface)}
 /* Máy ảnh, Thiết bị, Thiết lập giá: nút Lưu / Hủy cùng cỡ với Đơn thuê và Quản lý tài khoản (cao 48px, bo 6px) */
 body[data-page="quan-ly"] .btn.btn-save:not(.cp-ok),body[data-page="quan-ly"] .btn.btn-cancel-sm:not(.cp-cancel){min-height:48px;height:48px;padding:0 20px;border-radius:6px;font-size:15px}
+
+/* ===================== Chuyển động mượt (chỉ transition / transform / opacity – không đổi bố cục) ===================== */
+:root{--ease-spring:cubic-bezier(.34,1.56,.64,1);--ease-out:cubic-bezier(.22,1,.36,1);--ease-std:cubic-bezier(.4,0,.2,1);--dur-fast:160ms;--dur:240ms;--dur-slow:420ms}
+/* Nút: nhấc nhẹ khi rê, nhún khi bấm */
+.btn,.btn-pill,.hp-btn,.hp-cta,.chip-link,.chip-amber,.chip-blue,.link-btn,.icon-btn,.otp-btn,.cp-trigger{transition:background-color var(--dur) var(--ease-std),border-color var(--dur) var(--ease-std),color var(--dur) var(--ease-std),box-shadow var(--dur) var(--ease-out),opacity var(--dur) var(--ease-std),transform var(--dur) var(--ease-spring)}
+.btn:not(:disabled):hover,.btn-pill:hover,.hp-btn:hover,.hp-cta:hover,.chip-amber:hover,.chip-blue:hover,.otp-btn:hover{transform:translateY(-1px)}
+.btn:not(:disabled):active,.btn-pill:active,.hp-btn:active,.hp-cta:active,.chip-link:active,.chip-amber:active,.chip-blue:active,.link-btn:active,.icon-btn:active,.otp-btn:active,.cp-trigger:active{transform:translateY(0) scale(.97);transition-duration:var(--dur-fast)}
+.btn:disabled{transition:opacity var(--dur) var(--ease-std)}
+/* Thẻ dòng máy & thẻ sản phẩm: nổi nhẹ khi rê (ảnh không phóng vì khung ảnh không cắt tràn) */
+.machine-tile,.hp-card{transition:transform var(--dur-slow) var(--ease-spring),box-shadow var(--dur-slow) var(--ease-out),border-color var(--dur) var(--ease-std)}
+.machine-tile:hover,.hp-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.machine-tile:active,.hp-card:active{transform:translateY(-1px) scale(.99);transition-duration:var(--dur-fast)}
+/* Ô nhập: viền và vầng sáng chuyển mượt khi focus */
+.input,.field input,.field select,.field textarea,.otp input{transition:border-color var(--dur) var(--ease-std),box-shadow var(--dur) var(--ease-out),background-color var(--dur) var(--ease-std)}
+/* Thanh bên, liên kết, hàng bảng, ô lịch, nhãn trạng thái */
+.sidebar a,.crumbs a,.footer a,.booking-tabs a{transition:background-color var(--dur) var(--ease-std),color var(--dur) var(--ease-std),opacity var(--dur) var(--ease-std)}
+.sidebar a:active{transform:scale(.98);transition:transform var(--dur-fast) var(--ease-std)}
+.table tbody tr,.table tbody td{transition:background-color var(--dur-fast) var(--ease-std)}
+.month-cell{transition:background-color var(--dur) var(--ease-std),border-color var(--dur) var(--ease-std),box-shadow var(--dur) var(--ease-out)}
+.badge,.tb-pill,.check input{transition:background-color var(--dur) var(--ease-std),color var(--dur) var(--ease-std),border-color var(--dur) var(--ease-std),transform var(--dur) var(--ease-spring)}
+.tb-pill:not(:disabled):active{transform:scale(.96)}
+/* Hộp nổi (chọn màu, gợi ý tìm kiếm, chọn trạng thái) và khung thông báo: hiện dần + trượt nhẹ; toast và hộp thoại giữ hiệu ứng sẵn có */
+@keyframes mee-pop-in{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes mee-fade-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cp-pop:not([hidden]),.suggest:not([hidden]),.tb-st-pick:not([hidden]){animation:mee-pop-in var(--dur) var(--ease-out) both;transform-origin:top left}
+.alert{animation:mee-fade var(--dur) var(--ease-out) backwards}
+/* Chuyển trang: nội dung hiện dần (chỉ đổi độ mờ, không dịch chuyển) */
+@keyframes mee-fade{from{opacity:0}to{opacity:1}}
+main.content>*{animation:mee-fade var(--dur-slow) var(--ease-out) backwards}
+main.content>*:nth-child(2){animation-delay:40ms}main.content>*:nth-child(3){animation-delay:80ms}
+@media (prefers-reduced-motion:reduce){main.content>*,.alert,.cp-pop,.suggest,.tb-st-pick{animation:none!important}.btn,.btn-pill,.hp-btn,.hp-cta,.machine-tile,.hp-card,.tb-pill{transform:none!important;transition:none!important}}
