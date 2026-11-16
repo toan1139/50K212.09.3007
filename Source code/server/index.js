@@ -37,6 +37,7 @@ if (PROD) {
     seed.capNhatTaiKhoanDemo();
     seed.capNhatDuLieuMau();
     seed.boSungKhachMau();
+    seed.boSungMayMau();
     run("INSERT OR IGNORE INTO cap_nhat_du_lieu(ma, thoi_gian) VALUES (?, datetime('now', 'localtime'))", SEED_KEY);
   }
 }
