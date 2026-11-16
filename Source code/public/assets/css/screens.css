@@ -1244,3 +1244,9 @@ body[data-page="tai-khoan"] .form-grid .input:disabled{background:var(--surface)
 body[data-page="quan-ly"] :is(.btn-save,.btn-choose-brown,.btn-choose-peach,.btn-pill.btn-peach){background:var(--primary);border-color:var(--primary);color:var(--surface)}
 body[data-page="quan-ly"] :is(.btn-save,.btn-choose-brown,.btn-choose-peach,.btn-pill.btn-peach):hover{background:var(--primary-hover);border-color:var(--primary-hover);color:var(--surface)}
 body[data-page="quan-ly"] .btn-pill.btn-peach svg{color:var(--surface)}
+/* Đơn thuê: nút chính (Lưu, Xác nhận, Tạo đơn thuê) cùng màu nâu đỏ như Máy ảnh / Tài khoản */
+body[data-page="don-thue"] .btn-primary,body[data-page="don-thue"] .page-head .btn-primary{background:var(--primary);border-color:var(--primary);color:var(--surface)}
+body[data-page="don-thue"] .btn-primary:hover,body[data-page="don-thue"] .page-head .btn-primary:hover{background:var(--primary-hover);border-color:var(--primary-hover);color:var(--surface)}
+body[data-page="don-thue"] .page-head .btn-primary svg{color:var(--surface)}
+/* Máy ảnh, Thiết bị, Thiết lập giá: nút Lưu / Hủy cùng cỡ với Đơn thuê và Quản lý tài khoản (cao 48px, bo 6px) */
+body[data-page="quan-ly"] .btn.btn-save:not(.cp-ok),body[data-page="quan-ly"] .btn.btn-cancel-sm:not(.cp-cancel){min-height:48px;height:48px;padding:0 20px;border-radius:6px;font-size:15px}
